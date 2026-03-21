@@ -50,7 +50,7 @@ export async function POST(req: Request) {
       verificationToken,
       message: "Email verified successfully" 
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("OTP Verify Error:", error);
     return NextResponse.json({ error: "Failed to verify OTP" }, { status: 500 });
   }

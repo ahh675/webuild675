@@ -29,7 +29,7 @@ export default function AdminDashboardPage() {
       const res = await fetch("/api/admin/submissions");
       const data = await res.json();
       if (data.submissions) setSubmissions(data.submissions);
-    } catch (e) {
+    } catch (e: any) {
       console.error("Failed to fetch submissions:", e);
     }
   }, []);
@@ -106,7 +106,7 @@ export default function AdminDashboardPage() {
         body: JSON.stringify({ id, status: newStatus }),
       });
       if (res.ok) fetchSubmissions();
-    } catch (e) {
+    } catch (e: any) {
       console.error("Failed to update submission:", e);
     }
   };
