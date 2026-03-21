@@ -4,15 +4,15 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { CheckCircle2, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SkyBackground } from "@/components/ui/sky-background";
+import { ReactiveBackground } from "@/components/ui/reactive-background";
 import { Navbar } from "@/components/navbar";
 import { LoadingScreen } from "@/components/loading-screen";
 
 export default function SuccessPage() {
   return (
-    <div className="flex flex-col min-h-screen relative overflow-hidden bg-white">
+    <div className="flex flex-col min-h-screen relative overflow-hidden bg-[#fbfbfd]">
       <LoadingScreen />
-      <SkyBackground />
+      <ReactiveBackground />
       <Navbar />
 
       <main className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
