@@ -12,7 +12,15 @@ const resend = process.env.RESEND_API_KEY
 export async function POST(req: Request) {
   try {
     if (!db) {
-      return NextResponse.json({ error: "Database not initialized" }, { status: 500 });
+      const missing = [];
+      if (!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) missing.push("NEXT_PUBLIC_FIREBASE_PROJECT_ID");
+      if (!process.env.FIREBASE_CLIENT_EMAIL) missing.push("FIREBASE_CLIENT_EMAIL");
+      if (!process.env.FIREBASE_PRIVATE_KEY) missing.push("FIREBASE_PRIVATE_KEY");
+      
+      return NextResponse.json({ 
+        error: "Database not initialized", 
+        details: missing.length > 0 ? `Missing environment variables: ${missing.join(", ")}` : "Initialization failed for an unknown reason. Please check Vercel logs."
+      }, { status: 500 });
     }
     const { email } = await req.json();
 
