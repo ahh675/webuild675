@@ -7,6 +7,8 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { getFirestore, collection, query, orderBy, onSnapshot, limit } from "firebase/firestore";
+import { app } from "@/lib/firebase";
 
 type Submission = {
   id: string;
@@ -23,6 +25,7 @@ export default function AdminDashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   const fetchSubmissions = useCallback(async () => {
     try {
@@ -38,6 +41,7 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     if (!auth) {
       setUser({ email: "admin@demo.mode", displayName: "Demo Admin" });
+      setIsDemoMode(true);
       setLoading(false);
       return;
     }
@@ -54,10 +58,9 @@ export default function AdminDashboardPage() {
 
   // Real-time Firestore Listener
   useEffect(() => {
-    if (!user) return;
+    if (!user || isDemoMode || !app) return;
     
-    const { getFirestore, collection, query, orderBy, onSnapshot, limit } = require("firebase/firestore");
-    const db = getFirestore();
+    const db = getFirestore(app);
     const q = query(collection(db, "submissions"), orderBy("createdAt", "desc"), limit(50));
 
     const unsubscribe = onSnapshot(q, (snapshot: any) => {
@@ -84,10 +87,12 @@ export default function AdminDashboardPage() {
           return merged.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         });
       }
+    }, (error) => {
+      console.error("Firestore snapshot error:", error);
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, [user, isDemoMode]);
 
   useEffect(() => {
     if (user) fetchSubmissions();
